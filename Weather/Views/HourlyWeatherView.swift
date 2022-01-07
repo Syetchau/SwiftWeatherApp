@@ -1,0 +1,79 @@
+//
+//  HourlyWeatherView.swift
+//  Weather
+//
+//  Created by LiewSyetChau on 6/1/22.
+//
+
+import SwiftUI
+
+struct HourlyWeatherView: View {
+    
+    @ObservedObject var cityVM: CityViewViewModel
+    
+    let color1 = CGColor(red: 138/255,
+                         green: 194/255,
+                         blue: 249/255,
+                         alpha: 1)
+    
+    let color2 = CGColor(red: 107/255,
+                         green: 136/255,
+                         blue: 239/255,
+                         alpha: 1)
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 20) {
+                ForEach(cityVM.weather.hourly) { weather in
+                    let icon = cityVM.getWeatherIcon(icon: weather.weather.count > 0 ? weather.weather[0].icon : "sun.max.fill")
+                    
+                    let hour = cityVM.getTimeFor(timestamp: weather.dt)
+                    
+                    let temp = cityVM.getTempFor(temp: weather.temp)
+                    
+                    
+                    getHourlyView(hour: hour,
+                                  image: icon,
+                                  temp: temp)
+                }
+            }
+        }
+    }
+    
+    private func getHourlyView(hour: String,
+                               image: Image,
+                               temp: String) -> some View {
+        
+        VStack(spacing: 20) {
+            Text(hour)
+            
+            image.foregroundColor(.yellow)
+            
+            Text(temp)
+            
+        }.foregroundColor(.white)
+         .padding()
+         .background(RoundedRectangle(cornerRadius: 5)
+                        .fill(LinearGradient(
+                            gradient: Gradient(
+                                colors: [
+                                    Color(self.color1),
+                                    Color(self.color2)]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing)))
+         .shadow(color: Color.white.opacity(0.1),
+                 radius: 2,
+                 x: -2,
+                 y: -2)
+         .shadow(color: Color.black.opacity(0.2),
+                 radius: 2,
+                 x: 2,
+                 y: 2)
+    }
+}
+
+struct HourlyWeatherView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
